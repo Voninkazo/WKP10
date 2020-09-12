@@ -111,30 +111,18 @@ tr:hover {
 }
 
 .popup,
-.deletepopup {
-    background: #ffffff;
+div.popup {
+    background: gray;
+    width: auto;
+    height: auto;
     box-shadow: 2px 5px 5px gray;
-    position: fixed;
+    position: absolute;
     transition: all 0.25s;
     top: 50%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    pointer-events: none;
+    left: 30%;
     --opacity: 0;
     opacity: var(--opacity);
-}
-
-.popup fieldset {
-    background: var(--grey);
-    padding: 2rem;
-    border: 3px solid var(--pink);
-    border-radius: 5px;
-    box-shadow: var(--box-shadow);
-    transition: all 0.2s;
-    --scale: 0.3;
-    transform: scale(var(--scale));
+    padding: 3rem;
 }
 
 .popup.open,
@@ -143,11 +131,54 @@ tr:hover {
     pointer-events: all;
 }
 
-.popup.open fieldset {
-    --scale: 1;
+p {
+    color: #000000;
+    font-size: 18px;
+    padding-inline-start: 2rem;
 }
 
-p,
+form ul {
+    display: flex;
+    flex-direction: column;
+    margin-block-end: 1rem;
+}
+
 button {
-    color: #ff8e3c;
+    padding-inline-start: 1rem;
+    padding-inline-end: 1rem;
+    padding-block-end: .75rem;
+    padding-block-start: .75rem;
+    background-color: #ff8e3c;
+    cursor: pointer;
+    border: none;
+    border-radius: .5rem;
+}
+
+ul.buttonDelt {
+    display: flex;
+    flex-direction: row;
+}
+
+.form li {
+    display: flex;
+    flex-direction: column;
+}
+
+.form li:not(:nth-child(1)) {
+    margin-block-start: 1rem;
+}
+
+input {
+    padding-inline-start: 1rem;
+    padding-inline-end: 1rem;
+    padding-block-end: .75rem;
+    padding-block-start: .75rem;
+    border-radius: .5rem;
+    font-size: 14px;
+    line-height: 24px;
+}
+
+label {
+    font-weight: 600;
+    margin-block-end: .5rem;
 }

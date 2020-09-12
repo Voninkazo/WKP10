@@ -1,6 +1,7 @@
 import faker from 'faker';
 
 const tbody = document.querySelector('tbody');
+const parent = document.querySelector('body');
 
 let persons = Array.from({ length: 10 }, () => {
     return {
@@ -29,7 +30,7 @@ const displayList = data => {
             <button class="edit" value="${person.id}">
                 <svg viewBox="0 0 20 20" fill="currentColor" class="pencil w-6 h-6"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path></svg>
             </button>
-            <button class="delete">
+            <button class="delete" value="${person.id}">
                 <svg viewBox="0 0 20 20" fill="currentColor" class="trash w-6 h-6"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
             </button>
             </td>
@@ -39,113 +40,134 @@ const displayList = data => {
         .join('');
 };
 
+const editPartner = (e) => {
+    // grab the icon edit and set the condition edit
+    const iconEdit = e.target.closest('button.edit');
+    if (iconEdit) {
+        const editTbleRow = e.target.closest('tr');
+        const idToEdit = editTbleRow.dataset.id; // the id of the item to delete
+        editPartnerPopup(idToEdit);
+    }
+};
 
-const editPartner = (id) => {
-    // code edit function here
+window.addEventListener('click', editPartner);
+
+
+const editPartnerPopup = idToEdit => {
+    // create the popup and show it with conditions
     return new Promise(async function(resolve) {
+        //create the popup form
         const popup = document.createElement('form');
-        let person = persons.find(person => person.id === id);
-        popup.classList.add('popup');
+        let person = persons.find(person => person.id === idToEdit);
         const html = `
-		<fieldset>
-			<label for="lastname">Last Name</label>
-			<input type="text" name="lastname" id="lastname" value="${person.lastName}">
-			<label for="firstname">First name</label>
-			<input type="text" name="firstname" id="firstname" value="${person.firstName}">
-			<label for="job">Job</label>
-			<input type="text" name="job" id="job" value="${person.jobTitle}">
-			<label for="area">Job area</label>
-			<input type="text" name="area" id="area" value="${person.jobArea}">
-			<label for="number">Phone Number</label>
-			<input type="text" name="number" id="number" value="${person.phoneNumber}">
-		</fieldset>
-	<div>
-		<button type="submit">Submit</button>
-		<button class="cancel">Cancel</button>
-	</div>
+        <ul class="form">
+            <li>
+			    <label for="lastName">Last Name:</label>
+                <input type="text" name="lastName" id="lastname" value="${person.lastName}">
+            </li>
+            <li>
+			    <label for="firstName">First Name:</label>
+                <input type="text" name="firstName" id="firstname" value="${person.firstName}">
+            </li>
+            <li>
+			    <label for="jobTitle">Job title:</label>
+                <input type="text" name="jobTitle" id="job" value="${person.jobTitle}">
+            </li>
+            <li>
+			    <label for="jobArea">Job area:</label>
+                <input type="text" name="jobArea" id="area" value="${person.jobArea}">
+            </li>
+            <li>
+			    <label for="phoneNumber">Phone Number:</label>    
+                <input type="text" name="phoneNumber" id="number" value="${person.phone}">
+            </li>
+		</ul>
+        <div>
+            <button type="submit">Submit</button>
+            <button class="cancel">Cancel</button>
+        </div>
 		`;
         popup.insertAdjacentHTML('afterbegin', html);
-        console.log(popup);
-        const parent = document.querySelector('body');
         parent.appendChild(popup);
+        popup.classList.add('popup');
         popup.classList.add('open');
-        if (options.cancel) {
-            const skipButton = e.target.closest('button.cancel');
-            // we use firstElementChild but not firstChild bec firstElementChild is a key word to grab an element. FirstChild is to grab a node( )
-            // TODO: listen for a click on that cancel button
-            skipButton.addEventListener("click", () => {
-                    resolve(null);
-                    destroyPopup(popup);
-                },
-                // This will allow the addEventListener run just once
-                { once: true });
+        popup.addEventListener('submit', e => {
+            e.preventDefault();
+            resolve();
+            person.lastName = popup.lastName.value;
+            person.firstName = popup.firstName.value;
+            person.jobArea = popup.jobArea.value;
+            person.jobTitle = popup.jobTitle.value;
+            person.phone = popup.phoneNumber.value;
+            displayList(persons);
+            console.log(person);
+            destroyPopup(popup);
+        }, { once: true });
+        if (popup.cancel) {
+            popup.cancel.addEventListener('click', function() {
+                resolve(null);
+                destroyPopup(popup);
+            }, { once: true });
         }
-        console.log(skipButton);
     })
-
 };
+
 async function destroyPopup(popup) {
-    popup.classList.remove("open");
-    // wait for one second to do its works
-    await wait(1000);
-    // remove the popup entirely
+    popup.classList.remove('open');
     popup.remove();
     popup = null;
 }
 
-
-const handleEdit = (event) => {
-    const iconEdit = event.target.closest('button.edit');
-    if (iconEdit) {
-        editPartner();
+//delete partner when clicking the icon delete
+const deletePartener = e => {
+    const iconDelt = e.target.closest('.delete');
+    if (iconDelt) {
+        const tableRow = e.target.closest('tr');
+        console.log(tableRow);
+        console.log(tableRow.dataset.id);
+        const idToDelete = tableRow.dataset.id;
+        deletePartenerPopup(idToDelete);
     }
 }
 
-window.addEventListener('click', handleEdit);
+window.addEventListener('click', deletePartener);
 
-const editPartnerPopup = (e) => {
-    // create edit popup here
-    const formEl = e.currentTarget;
-    const lastNameInput = document.querySelector('.lastname');
-    let editedPerson = {
-        lastName: `${formEl.lastname.value}`,
-        firstName: `${formEl.firstname.value}`,
-        job: `${formEl.job.value}`,
-        area: `${formEl.area.value}`,
-        phone: `${formEl.number.value}`,
-    }
-    lastNameInput
-};
-
-const deletePartner = () => {
-    // code delete function gere
+const deletePartenerPopup = idToDelete => {
     return new Promise(async function(resolve) {
         const deletePopup = document.createElement('div');
-        deletePopup.classList.add('deletepopup');
+        // find the id to delete
+        let personToDelet = persons.find(person => person.id === idToDelete);
+        deletePopup.classList.add('popup');
         const html = `
-			<p>Are you sure you want to delete this</p>
-			<button class="yes">Yes</button>
-			<button class="no">No</button>
-		`;
-        deletePopup.insertAdjacentHTML("afterbegin", html);
-        const parentEl = document.querySelector('body');
-        parentEl.appendChild(deletePopup);
-        console.log(deletePopup);
+                    <div>
+                        <p>Do you really want to delete ${personToDelet.lastName} ${personToDelet.firstName}?</p>
+                        <ul class="buttonDelt">
+                            <li>
+                                <button class="yes">Yes</button>
+                            </li>
+                            <li>
+                                <button class="cancel">Cancel</button>
+                            </li>
+                    </div>
+                `;
+        deletePopup.insertAdjacentHTML('afterbegin', html);
+        deletePopup.addEventListener('click', (e) => {
+            if (e.target.matches('.yes')) {
+                let filteredPerson = persons.filter(pers => pers.id !== idToDelete);
+                displayList(filteredPerson);
+                console.log(filteredPerson);
+                destroyPopup(deletePopup);
+            }
+
+            // when cancel deleting
+            if (e.target.matches('.cancel')) {
+                destroyPopup(deletePopup);
+            }
+        })
+        resolve();
+        parent.appendChild(deletePopup)
         deletePopup.classList.add('open');
-    })
+    });
 };
-const handleDelete = (e) => {
-    const delteIcon = e.target.closest('button.delete');
-    if (delteIcon) {
-        deletePartner();
-    }
-}
-window.addEventListener('click', handleDelete);
-
-const deleteDeletePopup = () => {
-    // create confirmation popup here
-};
-
-
 
 displayList(persons);
