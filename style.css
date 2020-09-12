@@ -159,6 +159,10 @@ ul.buttonDelt {
     flex-direction: row;
 }
 
+ul.buttonDelt li {
+    margin-inline-start: 1rem;
+}
+
 .form li {
     display: flex;
     flex-direction: column;
@@ -181,4 +185,5 @@ input {
 label {
     font-weight: 600;
     margin-block-end: .5rem;
+    color: #ffff;
 }
